@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: product-app-deployment
+    namespace: public-akashbhardwaj
+    labels:
+        app: product-app
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: product-app
+    template:
+        metadata:
+            labels:
+                app: product-app
+        spec:
+            containers:
+                - name: product-app
+                  image: bhardwajakash/product:master
+                  ports:
+                    - name: http
+                      containerPort: 80
+                      protocol: TCP
+                  env:
+                    - name: MongoDB__User
+                      valueFrom:
+                        secretKeyRef:
+                            name: mongodb-secret
+                            key: username
+                    - name: MongoDB__Password
+                      valueFrom:
+                        secretKeyRef:
+                            name: mongodb-secret
+                            key: password
+                    - name: MongoDB__Host
+                      valueFrom:
+                        configMapKeyRef:
+                            name: mongodb-configmap
+                            key: database_service
